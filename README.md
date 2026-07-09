@@ -4,43 +4,28 @@ Workers who want to trade jobs post anonymous swap offers, chat with each other,
 
 ## How to start it on your computer (simple version)
 
-Think of this like starting a small program that turns your computer into the JobSwap website, just for you, so you can click around and try it.
+Open the project in VS Code, open its terminal (`` Ctrl + ` ``), and:
 
-**You only need to do steps 1–4 once.** After that, starting the site is just step 5.
+**The very first time** (downloads everything the site needs and prepares it — takes a few minutes):
 
-1. **Open a terminal.** On Windows: press the Windows key, type `powershell`, press Enter. A dark window appears — that's fine, you'll just copy-paste a few lines into it.
+```
+npm run setup
+```
 
-2. **Go to the project folder.** Type this and press Enter (change the path if you keep the folder somewhere else):
-   ```
-   cd "C:\Users\demar\OneDrive\Dators\jobSwap"
-   ```
+**Every time you want the site running:**
 
-3. **Install what the site needs** (this downloads its building blocks — it can take a few minutes):
-   ```
-   composer install
-   npm install
-   npm run build
-   ```
+```
+npm start
+```
 
-4. **Prepare the site for first use** (creates its settings and a small database file with two test users):
-   ```
-   copy .env.example .env
-   php artisan key:generate
-   php artisan migrate --seed
-   php artisan db:seed --class=DemoSeeder
-   ```
+Leave that terminal open — it *is* the site. Open your browser at **http://localhost:8000** and you'll see the JobSwap front page with example job posts.
 
-5. **Start the site:**
-   ```
-   php artisan serve
-   ```
-   Leave that window open — it *is* the site running. Now open your internet browser and go to **http://localhost:8000**. You should see the JobSwap front page with example job posts.
+Two test accounts are ready (password for both is `password`):
 
-6. **Log in and explore.** Two test accounts are ready (password for both is `password`):
-   - Regular worker: `test@example.com`
-   - Administrator: `admin@jobswap.lv` (this one can open the Admin panel)
+- Regular worker: `test@example.com`
+- Administrator: `admin@jobswap.lv` (this one can open the Admin panel)
 
-7. **To stop the site:** go back to the dark window and press `Ctrl + C`. Nothing is lost — next time just do step 5 again.
+To stop the site, click into the terminal and press `Ctrl + C`. Nothing is lost — next time just run `npm start` again.
 
 > Note: emails and card payments are switched off until real Brevo/Stripe accounts are connected (see the technical section below), so you can test everything safely — no real money moves anywhere.
 

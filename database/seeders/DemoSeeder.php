@@ -10,10 +10,15 @@ class DemoSeeder extends Seeder
 {
     /**
      * Fill the marketplace with realistic-looking demo posts for local
-     * development and demos. Never run this in production.
+     * development and demos. Never run this in production. Safe to
+     * re-run: skips seeding when demo posts already exist.
      */
     public function run(): void
     {
+        if (Post::where('current_job_title', 'Autobusa vadītājs')->exists()) {
+            return;
+        }
+
         $samples = [
             ['Autobusa vadītājs', 'Kravas auto vadītājs', 'D kategorija, 95. kods', 8, 'riga', 'immediately'],
             ['Pavārs', 'Šefpavāra vietnieks', 'Pārtikas higiēnas apliecība', 5, 'riga', '1_month'],
