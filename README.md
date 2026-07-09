@@ -1,58 +1,141 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# JobSwap.lv — Anonymous Job Swap Marketplace for Latvia
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Workers who want to trade jobs post anonymous swap offers, chat with each other, and request a swap. Both employers approve or decline through a one-time email link — no employer account needed. When everyone has said yes, each worker is charged a €5 fee (€10 total) and the full details are revealed.
 
-## About Laravel
+## How to start it on your computer (simple version)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Think of this like starting a small program that turns your computer into the JobSwap website, just for you, so you can click around and try it.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+**You only need to do steps 1–4 once.** After that, starting the site is just step 5.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. **Open a terminal.** On Windows: press the Windows key, type `powershell`, press Enter. A dark window appears — that's fine, you'll just copy-paste a few lines into it.
 
-## Learning Laravel
+2. **Go to the project folder.** Type this and press Enter (change the path if you keep the folder somewhere else):
+   ```
+   cd "C:\Users\demar\OneDrive\Dators\jobSwap"
+   ```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. **Install what the site needs** (this downloads its building blocks — it can take a few minutes):
+   ```
+   composer install
+   npm install
+   npm run build
+   ```
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+4. **Prepare the site for first use** (creates its settings and a small database file with two test users):
+   ```
+   copy .env.example .env
+   php artisan key:generate
+   php artisan migrate --seed
+   php artisan db:seed --class=DemoSeeder
+   ```
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+5. **Start the site:**
+   ```
+   php artisan serve
+   ```
+   Leave that window open — it *is* the site running. Now open your internet browser and go to **http://localhost:8000**. You should see the JobSwap front page with example job posts.
 
-## Agentic Development
+6. **Log in and explore.** Two test accounts are ready (password for both is `password`):
+   - Regular worker: `test@example.com`
+   - Administrator: `admin@jobswap.lv` (this one can open the Admin panel)
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+7. **To stop the site:** go back to the dark window and press `Ctrl + C`. Nothing is lost — next time just do step 5 again.
 
-```bash
-composer require laravel/boost --dev
+> Note: emails and card payments are switched off until real Brevo/Stripe accounts are connected (see the technical section below), so you can test everything safely — no real money moves anywhere.
 
-php artisan boost:install
+---
+
+## How a swap works
+
+1. **Worker A** posts an anonymous swap offer (job title, desired title, licences, experience, region, availability).
+2. **Worker B** finds it in the browse feed and opens a chat — no commitment.
+3. Worker B clicks **Request Swap**; Worker A approves or declines.
+4. On approval, a **€5 payment is reserved** (Stripe authorization, not a charge) from each worker, and both employers receive an email link.
+5. Each employer link shows the full swap details with a Q&A field and a **Yes/No** decision — no registration.
+6. When **both employers approve**, the reserved €5 is captured from each worker and full details are revealed to both sides.
+7. If **anyone declines** at any stage, the Stripe reservations are released and the post stays active.
+
+Posts expire after 30 days; owners get an email reminder 3 days before expiry. Workers can run multiple active posts.
+
+## Tech stack
+
+- **Laravel 13** + **Livewire 3** — single-page-feel UI without a JS framework
+- **Laravel Breeze** — worker authentication
+- **Laravel Cashier + Stripe** — manual-capture PaymentIntents (authorize → capture/cancel)
+- **Laravel Mail + Brevo SMTP** — all transactional email
+- **SQLite** in development, **MySQL/PostgreSQL** in production
+- **Tailwind CSS** — minimal, clean UI; LV/EN language toggle throughout
+
+## Configuration
+
+### Stripe
+
+Set in `.env`:
+
+```
+STRIPE_KEY=pk_test_...
+STRIPE_SECRET=sk_test_...
+CASHIER_CURRENCY=eur
+SWAP_FEE_CENTS=500
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Workers add a card at `/payment-method` (Stripe SetupIntent). The swap flow in `app/Services/SwapFlowService.php` creates a manual-capture PaymentIntent per worker when employers are notified, captures both on full confirmation, and cancels them on any decline. If a reservation fails, the swap is cancelled and the counterpart reservation released.
 
-## Contributing
+### Email (Brevo)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+`.env.example` is preconfigured for Brevo's SMTP relay — fill in `MAIL_USERNAME` / `MAIL_PASSWORD` with your Brevo SMTP credentials. Mailables live in `app/Mail/`.
 
-## Code of Conduct
+### Scheduler
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Two daily commands (registered in `routes/console.php`):
 
-## Security Vulnerabilities
+- `app:expire-posts` — expires posts older than 30 days
+- `app:send-expiry-reminders` — emails owners 3 days before a post expires
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+In production run the standard cron entry:
 
-## License
+```
+* * * * * cd /var/www/jobswap && php artisan schedule:run >> /dev/null 2>&1
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Tests
+
+```bash
+php artisan test
+```
+
+Feature coverage includes the full swap state machine (request → worker approval → employer approvals → capture/release), employer token links, post expiry, access control, and guest browsing.
+
+## Deploying to Hetzner (Ubuntu 24.04)
+
+1. **Provision** a CX22 (or larger) with Ubuntu, then install the stack:
+   ```bash
+   apt install nginx mysql-server php8.4-fpm php8.4-{mysql,xml,mbstring,curl,zip,intl,bcmath} composer nodejs npm
+   ```
+2. **Database**: create a `jobswap` MySQL database and user; set `DB_CONNECTION=mysql` and credentials in `.env`.
+3. **Code**: clone the repo to `/var/www/jobswap`, then:
+   ```bash
+   composer install --no-dev --optimize-autoloader
+   npm ci && npm run build
+   php artisan key:generate
+   php artisan migrate --force
+   php artisan config:cache && php artisan route:cache && php artisan view:cache
+   ```
+4. **Nginx**: point the server block at `public/`, enable HTTPS with certbot.
+5. **Cron**: add the `schedule:run` entry above.
+6. **Queue** (recommended, mail is queued): set `QUEUE_CONNECTION=database` and run `php artisan queue:work` under systemd/supervisor.
+7. Set `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL=https://...`, live Stripe keys, and Brevo credentials.
+
+## Project layout
+
+- `app/Livewire/` — feed, post form, chat, swaps, payment method form, admin panel
+- `app/Services/SwapFlowService.php` — the swap state machine and all Stripe authorize/capture/release logic
+- `app/Http/Controllers/EmployerApprovalController.php` — tokenized employer approve/decline pages (no auth)
+- `app/Mail/` — all transactional mailables
+- `config/jobswap.php` — regions, availability options, swap fee
+- `lang/lv/`, `lang/lv.json` — Latvian translations (LV is the default locale)
+
+## For AI agents
+
+The repo is indexed with [codegraph](https://github.com/colbymchenry/codegraph) (`codegraph.json` config at the root). Prefer `codegraph explore <query>` / `codegraph query <symbol>` over grep for symbol lookup, call-flow, and impact questions.
