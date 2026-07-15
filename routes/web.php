@@ -10,6 +10,7 @@ use App\Livewire\Admin\Posts as AdminPosts;
 use App\Livewire\Admin\Swaps as AdminSwaps;
 use App\Livewire\Admin\Users as AdminUsers;
 use App\Livewire\Chat\ConversationList;
+use App\Livewire\Dashboard;
 use App\Livewire\Payments\PaymentMethodForm;
 use App\Livewire\Posts\Feed;
 use App\Livewire\Posts\MyPosts;
@@ -23,7 +24,7 @@ Route::get('/', Feed::class)->name('home');
 Route::post('locale/{locale}', [LocaleController::class, 'update'])->name('locale.update');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', Dashboard::class)->name('dashboard');
 
     Route::get('posts/create', PostForm::class)->name('posts.create');
     Route::get('posts/{post}/edit', PostForm::class)->name('posts.edit');

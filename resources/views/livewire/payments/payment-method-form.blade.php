@@ -1,6 +1,9 @@
-<div>
+<div class="mx-auto max-w-xl px-4 py-10 sm:px-6 lg:px-8">
+    <h1 class="text-2xl font-bold tracking-tight text-zinc-900 dark:text-zinc-100">{{ __('Payment method') }}</h1>
+    <p class="mb-8 mt-1 text-sm text-zinc-500 dark:text-zinc-400">{{ __('Your card is only charged €5 when a swap is fully confirmed by everyone. Approvals reserve the amount first — declines release it automatically.') }}</p>
+
     @if ($defaultPaymentMethod)
-        <div class="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-800">
+        <div class="flex items-center justify-between rounded-xl border border-zinc-200 bg-white px-4 py-3 shadow-card dark:border-zinc-700 dark:bg-zinc-900">
             <div class="text-sm text-gray-700 dark:text-gray-300">
                 {{ __('Card on file') }}: <span class="font-medium uppercase">{{ $defaultPaymentMethod->card->brand }}</span>
                 &bull;&bull;&bull;&bull; {{ $defaultPaymentMethod->card->last4 }}

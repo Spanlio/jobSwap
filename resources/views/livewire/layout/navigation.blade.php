@@ -16,15 +16,15 @@ new class extends Component
     }
 }; ?>
 
-<nav x-data="{ open: false }" class="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
+<nav x-data="{ open: false }" class="sticky top-0 z-40 border-b border-zinc-200 bg-white/95 backdrop-blur dark:border-zinc-800 dark:bg-zinc-900/95">
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('home') }}" wire:navigate class="font-semibold tracking-tight text-gray-800 dark:text-gray-100">
-                        JobSwap<span class="text-indigo-500">.lv</span>
+                    <a href="{{ route('home') }}" wire:navigate class="focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 rounded">
+                        <x-brand-logo class="text-lg" />
                     </a>
                 </div>
 
@@ -56,13 +56,14 @@ new class extends Component
                 <x-locale-switcher />
 
                 @auth
-                    <a href="{{ route('posts.create') }}" wire:navigate class="inline-flex items-center rounded-md bg-gray-800 px-3 py-2 text-xs font-semibold uppercase tracking-widest text-white hover:bg-gray-700 dark:bg-gray-200 dark:text-gray-800">
+                    <a href="{{ route('posts.create') }}" wire:navigate class="inline-flex items-center gap-1.5 rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
+                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"/></svg>
                         {{ __('Post a swap') }}
                     </a>
 
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
-                            <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none transition ease-in-out duration-150">
+                            <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-lg text-zinc-500 dark:text-zinc-400 bg-transparent hover:text-zinc-800 dark:hover:text-zinc-200 focus:outline-none transition ease-in-out duration-150">
                                 {{ auth()->user()->handle }}
 
                                 <div class="ms-1">
@@ -89,10 +90,10 @@ new class extends Component
                         </x-slot>
                     </x-dropdown>
                 @else
-                    <a href="{{ route('login') }}" wire:navigate class="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                    <a href="{{ route('login') }}" wire:navigate class="text-sm font-medium text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white">
                         {{ __('Log in') }}
                     </a>
-                    <a href="{{ route('register') }}" wire:navigate class="inline-flex items-center rounded-md bg-gray-800 px-3 py-2 text-xs font-semibold uppercase tracking-widest text-white hover:bg-gray-700 dark:bg-gray-200 dark:text-gray-800">
+                    <a href="{{ route('register') }}" wire:navigate class="inline-flex items-center rounded-lg bg-brand-600 px-3.5 py-2 text-sm font-semibold text-white transition hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2">
                         {{ __('Sign up') }}
                     </a>
                 @endauth

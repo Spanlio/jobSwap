@@ -15,9 +15,9 @@
             href="{{ route($route) }}"
             wire:navigate
             @class([
-                'rounded-md px-3 py-1.5 text-sm font-medium',
-                'bg-gray-800 text-white dark:bg-gray-200 dark:text-gray-800' => request()->routeIs($route),
-                'text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700' => ! request()->routeIs($route),
+                'rounded-lg px-3 py-1.5 text-sm font-semibold transition',
+                'bg-ink text-white dark:bg-zinc-100 dark:text-zinc-900' => request()->routeIs($route),
+                'text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800' => ! request()->routeIs($route),
             ])
         >
             {{ $label }}

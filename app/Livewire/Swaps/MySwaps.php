@@ -37,12 +37,12 @@ class MySwaps extends Component
     public function render()
     {
         $received = Auth::user()->swapRequestsReceived()
-            ->with(['requester', 'requesterPost', 'post'])
+            ->with(['requester', 'requesterPost', 'post', 'employerApprovals'])
             ->latest()
             ->get();
 
         $made = Auth::user()->swapRequestsMade()
-            ->with(['postOwner', 'requesterPost', 'post'])
+            ->with(['postOwner', 'requesterPost', 'post', 'employerApprovals'])
             ->latest()
             ->get();
 
